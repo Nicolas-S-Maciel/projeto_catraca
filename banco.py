@@ -1,11 +1,11 @@
 import sqlite3
 
 def criar_banco():
-    # Conecta ao banco (se não existir, ele cria o arquivo automacao.db)
+    # Conecta ao banco de dados (cria o arquivo automacao.db se não existir)
     conexao = sqlite3.connect('automacao.db')
     cursor = conexao.cursor()
 
-    # Cria a tabela de Funcionários
+    # Cria a tabela de Funcionários (Entidade principal)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS funcionarios (
             id_cracha TEXT PRIMARY KEY,
@@ -15,7 +15,7 @@ def criar_banco():
         )
     ''')
 
-    # Cria a tabela de Histórico de Acessos
+    # Cria a tabela de Histórico (Entidade de registro) com Chave Estrangeira
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS historico (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,19 +26,20 @@ def criar_banco():
         )
     ''')
 
-    # Limpa a tabela de funcionários para não duplicar se rodar o script duas vezes
+    # Limpa a tabela de funcionários para não dar erro de duplicação se rodar 2 vezes
     cursor.execute('DELETE FROM funcionarios')
 
-    # Insere funcionários de teste (TI e TA)
+    # Insere 3 funcionários de teste automaticamente para facilitar a apresentação
     funcionarios_teste = [
         ('111', 'João Silva', 'Produção', True),
         ('222', 'Maria Souza', 'Manutenção', True),
-        ('333', 'Carlos Eduardo', 'Visitante', False) # Acesso bloqueado
+        ('333', 'Carlos Eduardo', 'Visitante', False) # Este usuário está bloqueado
     ]
     
+    # Executa o INSERT no banco
     cursor.executemany('INSERT INTO funcionarios VALUES (?, ?, ?, ?)', funcionarios_teste)
 
-    # Salva as alterações e fecha a conexão
+    # Salva as alterações (commit) e fecha a conexão
     conexao.commit()
     conexao.close()
     print("Banco de dados criado e populado com sucesso!")
